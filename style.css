@@ -14,8 +14,11 @@ body {
   padding: 10px;
 }
 
-h2 {
-  text-align: center;
+.header {
+  position: sticky;
+  top: 0;
+  background: #f4f4f4;
+  padding: 10px 0;
 }
 
 input, button {
@@ -50,4 +53,8 @@ button {
   margin-top: 8px;
   border-radius: 8px;
   word-break: break-word;
+}
+
+.hidden {
+  display: none;
 }
