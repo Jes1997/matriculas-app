@@ -1,6 +1,7 @@
 let data = JSON.parse(localStorage.getItem("plates")) || [];
 let editIndex = null;
 let formVisible = false;
+let lastCompany = "";
 
 const search = document.getElementById("search");
 const quickPlate = document.getElementById("quickPlate");
@@ -9,17 +10,29 @@ const plateInput = document.getElementById("plate");
 const companyInput = document.getElementById("company");
 const keyInput = document.getElementById("key");
 
-/* 🔤 normalizar búsqueda */
+let history = [];
+
+/* 🔤 normalizar */
 function normalize(text) {
   return text.toUpperCase().replace(/\s|-/g, "");
 }
 
-/* 💾 guardar en localStorage */
+/* 💾 guardar */
 function saveStorage() {
   localStorage.setItem("plates", JSON.stringify(data));
 }
 
-/* 👁 mostrar/ocultar formulario */
+/* 📳 vibración */
+function vibrate() {
+  if (navigator.vibrate) navigator.vibrate(50);
+}
+
+/* 🔝 autofocus */
+window.addEventListener("load", () => {
+  quickPlate.focus();
+});
+
+/* 👁 formulario */
 function toggleForm() {
   formVisible = !formVisible;
   document.getElementById("form").classList.toggle("hidden", !formVisible);
@@ -29,17 +42,17 @@ function toggleForm() {
   }
 }
 
-/* ❌ cancelar edición */
+/* ❌ cancelar */
 function cancelEdit() {
   editIndex = null;
   clear();
   toggleForm();
 }
 
-/* 💾 guardar registro */
+/* 💾 guardar */
 function save(plateValue = null) {
   const plate = (plateValue || plateInput.value).toUpperCase().trim();
-  const company = companyInput.value.trim();
+  let company = companyInput.value.trim() || lastCompany;
   const key = keyInput.value.trim();
 
   if (!plate || (!company && editIndex === null)) {
@@ -47,7 +60,6 @@ function save(plateValue = null) {
     return;
   }
 
-  // 🚫 evitar duplicados
   const exists = data.some((x, i) =>
     x.plate === plate && i !== editIndex
   );
@@ -57,6 +69,8 @@ function save(plateValue = null) {
     return;
   }
 
+  if (company) lastCompany = company;
+
   if (editIndex !== null) {
     data[editIndex] = { plate, company, key };
     editIndex = null;
@@ -64,31 +78,56 @@ function save(plateValue = null) {
     data.push({ plate, company, key });
   }
 
+  /* 📊 historial */
+  history.unshift(plate);
+  history = [...new Set(history)].slice(0, 5);
+
   saveStorage();
   clear();
   render();
+  vibrate();
 
   if (formVisible) toggleForm();
 }
 
-/* 🔍 render lista */
+/* 🔍 render */
 function render() {
   const value = search.value;
   const list = document.getElementById("list");
 
   list.innerHTML = "";
 
+  /* 📊 contador */
+  list.innerHTML += `<p>Total: ${data.length}</p>`;
+
+  /* 📌 historial */
+  if (history.length > 0) {
+    list.innerHTML += `
+      <div class="card">
+        <b>Últimos:</b><br>
+        ${history.join(" - ")}
+      </div>
+    `;
+  }
+
   if (!value) {
-    list.innerHTML = "<p>🔍 Escribe una matrícula para buscar</p>";
+    list.innerHTML += "<p>🔍 Escribe una matrícula para buscar</p>";
     return;
   }
 
-  const results = data.filter(x =>
+  let results = data.filter(x =>
     normalize(x.plate).includes(normalize(value))
   );
 
+  /* 🧠 exact match primero */
+  results.sort((a, b) => {
+    const exactA = normalize(a.plate) === normalize(value);
+    const exactB = normalize(b.plate) === normalize(value);
+    return exactB - exactA;
+  });
+
   if (results.length === 0) {
-    list.innerHTML = "<p>No encontrado</p>";
+    list.innerHTML += "<p>No encontrado</p>";
     return;
   }
 
@@ -128,7 +167,7 @@ function del(i) {
   }
 }
 
-/* 🧹 limpiar inputs */
+/* 🧹 limpiar */
 function clear() {
   plateInput.value = "";
   companyInput.value = "";
@@ -136,7 +175,7 @@ function clear() {
   editIndex = null;
 }
 
-/* ⚡ entrada rápida con ENTER */
+/* ⚡ entrada rápida */
 quickPlate.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     save(e.target.value);
@@ -144,10 +183,10 @@ quickPlate.addEventListener("keydown", (e) => {
   }
 });
 
-/* 🔍 búsqueda en tiempo real */
+/* 🔍 búsqueda */
 search.addEventListener("input", render);
 
-/* 📤 exportar JSON */
+/* 📤 export */
 function exportData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], {
     type: "application/json"
@@ -166,7 +205,7 @@ function exportData() {
   URL.revokeObjectURL(url);
 }
 
-/* 📥 importar JSON */
+/* 📥 import */
 function importData(event) {
   const file = event.target.files[0];
   if (!file) return;
