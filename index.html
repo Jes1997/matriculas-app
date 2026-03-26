@@ -12,12 +12,22 @@
 <div class="container">
 
   <div class="header">
-    <button onclick="toggleForm()">➕ Añadir matrícula</button>
+
+    <button onclick="toggleForm()">➕ Añadir / Editar</button>
+    <button onclick="exportData()">⬇️ Exportar</button>
+
     <input id="search" placeholder="Buscar matrícula...">
+
+  </div>
+
+  <!-- 🚀 MODO RÁPIDO (siempre visible para uso en garita) -->
+  <div class="quick-entry">
+    <input id="quickPlate" placeholder="Matrícula rápida (ENTER para guardar)">
   </div>
 
   <div id="form" class="hidden">
-    <h3>Añadir / Editar</h3>
+
+    <h3>Formulario</h3>
 
     <input id="plate" placeholder="Matrícula">
     <input id="company" placeholder="Empresa">
@@ -25,6 +35,8 @@
 
     <button class="save" onclick="save()">Guardar</button>
     <button onclick="cancelEdit()">Cancelar</button>
+
+    <input type="file" id="importFile" onchange="importData(event)">
   </div>
 
   <div id="list"></div>
