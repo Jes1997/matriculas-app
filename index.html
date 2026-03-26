@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrículas</title>
+
+<style>
+body { font-family: Arial; padding: 10px; background:#f4f4f4; }
+input, button { width:100%; padding:12px; margin:5px 0; font-size:16px; }
+button { border:none; border-radius:6px; }
+.save { background:#28a745; color:white; }
+.edit { background:#ffc107; }
+.delete { background:#dc3545; color:white; }
+.card { background:white; padding:10px; margin-top:8px; border-radius:8px; }
+</style>
+</head>
+
+<body>
+
+<h2>🚛 Matrículas</h2>
+
+<input id="search" placeholder="Buscar matrícula...">
+
+<h3>Añadir / Editar</h3>
+<input id="plate" placeholder="Matrícula">
+<input id="company" placeholder="Empresa">
+<input id="key" placeholder="Llave combustible (opcional)">
+<button class="save" onclick="save()">Guardar</button>
+
+<div id="list"></div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("plates")) || [];
+let editIndex = null;
+
+function save() {
+  const plate = document.getElementById("plate").value.toUpperCase();
+  const company = document.getElementById("company").value;
+  const key = document.getElementById("key").value;
+
+  if (!plate || !company) return alert("Completa campos");
+
+  if (editIndex !== null) {
+    data[editIndex] = { plate, company, key };
+    editIndex = null;
+  } else {
+    data.push({ plate, company, key });
+  }
+
+  localStorage.setItem("plates", JSON.stringify(data));
+  clear();
+  render();
+}
+
+function render() {
+  const s = document.getElementById("search").value.toUpperCase();
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.filter(x => x.plate.includes(s)).forEach((x,i) => {
+    list.innerHTML += `
+      <div class="card">
+        <b>${x.plate}</b><br>
+        ${x.company}<br>
+        ${x.key ? "🔑 " + x.key : ""}
+        <br><br>
+        <button class="edit" onclick="edit(${i})">Editar</button>
+        <button class="delete" onclick="del(${i})">Eliminar</button>
+      </div>
+    `;
+  });
+}
+
+function edit(i){
+  plate.value = data[i].plate;
+  company.value = data[i].company;
+  key.value = data[i].key || "";
+  editIndex = i;
+}
+
+function del(i){
+  if(confirm("¿Eliminar?")){
+    data.splice(i,1);
+    localStorage.setItem("plates", JSON.stringify(data));
+    render();
+  }
+}
+
+function clear(){
+  plate.value = "";
+  company.value = "";
+  key.value = "";
+}
+
+search.addEventListener("input", render);
+render();
+</script>
+
+</body>
+</html>
