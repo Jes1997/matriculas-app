@@ -1,30 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Matrículas</title>
-
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrículas App</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="container">
 
-<h2>🚛 Matrículas</h2>
+  <div class="header">
+    <button onclick="toggleForm()">➕ Añadir matrícula</button>
+    <input id="search" placeholder="Buscar matrícula...">
+  </div>
 
-<input id="search" placeholder="Buscar matrícula...">
+  <div id="form" class="hidden">
+    <h3>Añadir / Editar</h3>
 
-<h3>Añadir / Editar</h3>
+    <input id="plate" placeholder="Matrícula">
+    <input id="company" placeholder="Empresa">
+    <input id="key" placeholder="Llave (opcional)">
 
-<input id="plate" placeholder="Matrícula">
-<input id="company" placeholder="Empresa">
-<input id="key" placeholder="Llave (opcional)">
+    <button class="save" onclick="save()">Guardar</button>
+    <button onclick="cancelEdit()">Cancelar</button>
+  </div>
 
-<button class="save" onclick="save()">Guardar</button>
-
-<div id="list"></div>
+  <div id="list"></div>
 
 </div>
 
