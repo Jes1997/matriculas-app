@@ -5,38 +5,49 @@ let formVisible = false;
 const search = document.getElementById("search");
 const quickPlate = document.getElementById("quickPlate");
 
+const plateInput = document.getElementById("plate");
+const companyInput = document.getElementById("company");
+const keyInput = document.getElementById("key");
+
+/* 🔤 normalizar búsqueda */
 function normalize(text) {
   return text.toUpperCase().replace(/\s|-/g, "");
 }
 
+/* 💾 guardar en localStorage */
 function saveStorage() {
   localStorage.setItem("plates", JSON.stringify(data));
 }
 
+/* 👁 mostrar/ocultar formulario */
 function toggleForm() {
   formVisible = !formVisible;
   document.getElementById("form").classList.toggle("hidden", !formVisible);
 
   if (formVisible) {
-    setTimeout(() => document.getElementById("plate").focus(), 100);
+    setTimeout(() => plateInput.focus(), 100);
   }
 }
 
+/* ❌ cancelar edición */
+function cancelEdit() {
+  editIndex = null;
+  clear();
+  toggleForm();
+}
+
+/* 💾 guardar registro */
 function save(plateValue = null) {
-
-  const plate = (plateValue || document.getElementById("plate").value)
-    .toUpperCase()
-    .trim();
-
-  const company = document.getElementById("company").value.trim();
-  const key = document.getElementById("key").value.trim();
+  const plate = (plateValue || plateInput.value).toUpperCase().trim();
+  const company = companyInput.value.trim();
+  const key = keyInput.value.trim();
 
   if (!plate || (!company && editIndex === null)) {
     alert("Completa datos");
     return;
   }
 
-  // 🚫 duplicados
+  // 🚫 evitar duplicados
   const exists = data.some((x, i) =>
     x.plate === plate && i !== editIndex
   );
@@ -60,6 +71,7 @@ function save(plateValue = null) {
   if (formVisible) toggleForm();
 }
 
+/* 🔍 render lista */
 function render() {
   const value = search.value;
   const list = document.getElementById("list");
@@ -96,16 +108,18 @@ function render() {
   });
 }
 
+/* ✏️ editar */
 function edit(i) {
   if (!formVisible) toggleForm();
 
-  document.getElementById("plate").value = data[i].plate;
-  document.getElementById("company").value = data[i].company;
-  document.getElementById("key").value = data[i].key || "";
+  plateInput.value = data[i].plate;
+  companyInput.value = data[i].company;
+  keyInput.value = data[i].key || "";
 
   editIndex = i;
 }
 
+/* 🗑 eliminar */
 function del(i) {
   if (confirm("¿Eliminar?")) {
     data.splice(i, 1);
@@ -114,17 +128,15 @@ function del(i) {
   }
 }
 
+/* 🧹 limpiar inputs */
 function clear() {
-  document.getElementById("plate").value = "";
-  document.getElementById("company").value = "";
-  document.getElementById("key").value = "";
+  plateInput.value = "";
+  companyInput.value = "";
+  keyInput.value = "";
   editIndex = null;
 }
 
-/* 🔍 búsqueda */
-search.addEventListener("input", render);
-
-/* ⚡ ENTER = guardado rápido */
+/* ⚡ entrada rápida con ENTER */
 quickPlate.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     save(e.target.value);
@@ -132,7 +144,10 @@ quickPlate.addEventListener("keydown", (e) => {
   }
 });
 
-/* 📤 export */
+/* 🔍 búsqueda en tiempo real */
+search.addEventListener("input", render);
+
+/* 📤 exportar JSON */
 function exportData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], {
     type: "application/json"
@@ -143,12 +158,15 @@ function exportData() {
   const a = document.createElement("a");
   a.href = url;
   a.download = "matriculas-backup.json";
+
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
 
   URL.revokeObjectURL(url);
 }
 
-/* 📥 import */
+/* 📥 importar JSON */
 function importData(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -168,78 +186,14 @@ function importData(event) {
       saveStorage();
       render();
 
-      alert("Importado correctamente");
+      alert("Datos importados correctamente");
     } catch {
-      alert("Error al importar");
+      alert("Error al importar archivo");
     }
   };
 
   reader.readAsText(file);
 }
 
-/* init */
-render();}
-
-function render() {
-  const value = search.value;
-  const list = document.getElementById("list");
-
-  list.innerHTML = "";
-
-  if (!value) {
-    list.innerHTML = "<p>🔍 Escribe una matrícula para buscar</p>";
-    return;
-  }
-
-  const results = data.filter(x =>
-    normalize(x.plate).includes(normalize(value))
-  );
-
-  if (results.length === 0) {
-    list.innerHTML = "<p>No encontrado</p>";
-    return;
-  }
-
-  results.forEach(x => {
-    const realIndex = data.findIndex(d => d.plate === x.plate);
-
-    list.innerHTML += `
-      <div class="card">
-        <b>${x.plate}</b><br>
-        ${x.company}<br>
-        ${x.key ? "🔑 " + x.key : ""}
-        <br><br>
-        <button class="edit" onclick="edit(${realIndex})">Editar</button>
-        <button class="delete" onclick="del(${realIndex})">Eliminar</button>
-      </div>
-    `;
-  });
-}
-
-function edit(i) {
-  if (!formVisible) toggleForm();
-
-  document.getElementById("plate").value = data[i].plate;
-  document.getElementById("company").value = data[i].company;
-  document.getElementById("key").value = data[i].key || "";
-
-  editIndex = i;
-}
-
-function del(i) {
-  if (confirm("¿Eliminar?")) {
-    data.splice(i, 1);
-    localStorage.setItem("plates", JSON.stringify(data));
-    render();
-  }
-}
-
-function clear() {
-  document.getElementById("plate").value = "";
-  document.getElementById("company").value = "";
-  document.getElementById("key").value = "";
-  editIndex = null;
-}
-
-search.addEventListener("input", render);
+/* 🚀 init */
 render();
