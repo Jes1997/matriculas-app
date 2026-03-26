@@ -1,4 +1,4 @@
-const CACHE_NAME = "matriculas-app-v1";
+const CACHE_NAME = "matriculas-app-v2";
 
 self.addEventListener("install", e => {
   e.waitUntil(
