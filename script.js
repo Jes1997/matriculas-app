@@ -22,9 +22,16 @@ function saveStorage() {
   localStorage.setItem("plates", JSON.stringify(data));
 }
 
-/* 📳 vibración */
-function vibrate() {
-  if (navigator.vibrate) navigator.vibrate(50);
+/* 📳 feedback (vibración + animación) */
+function feedback() {
+  if ("vibrate" in navigator) {
+    navigator.vibrate(50);
+  }
+
+  document.body.style.transform = "scale(0.98)";
+  setTimeout(() => {
+    document.body.style.transform = "scale(1)";
+  }, 100);
 }
 
 /* 🔝 autofocus */
@@ -85,7 +92,7 @@ function save(plateValue = null) {
   saveStorage();
   clear();
   render();
-  vibrate();
+  feedback();
 
   if (formVisible) toggleForm();
 }
@@ -240,7 +247,3 @@ render();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
-
-navigator.serviceWorker.register("./sw.js")
-  .then(() => alert("SW OK"))
-  .catch(() => alert("SW ERROR"));
