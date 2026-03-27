@@ -84,3 +84,17 @@ input {
 .hidden {
   display: none;
 }
+
+.dark {
+  background: #0f172a;
+  color: white;
+}
+
+.dark .card {
+  background: #1e293b;
+}
+
+.dark input {
+  background: #1e293b;
+  color: white;
+}
