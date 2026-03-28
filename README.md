@@ -15,14 +15,6 @@
 
 ---
 
-## 📸 Capturas
-
-![Pantalla principal](screenshot1.png)  
-![Búsqueda](screenshot2.png)  
-![Formulario](screenshot3.png)
-
----
-
 ## 🎯 Problema que resuelve
 
 En entornos de garita o control de accesos:
