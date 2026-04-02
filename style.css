@@ -20,7 +20,8 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Arial;
-  background: #eef1f5;
+  background: var(--bg);
+  color: var(--text);
 }
 
 /* 📱 contenedor */
@@ -32,6 +33,7 @@ body {
 
 /* 🔝 header */
 .header {
+  background: var(--bg);
   position: sticky;
   top: 0;
   background: #eef1f5;
@@ -41,6 +43,7 @@ body {
 
 /* 🔘 botones */
 button {
+  color: var(--text);
   width: 100%;
   padding: 14px;
   margin: 6px 0;
@@ -67,6 +70,8 @@ button {
 
 /* inputs */
 input {
+  background: var(--input);
+  color: var(--text);
   width: 100%;
   padding: 14px;
   margin: 6px 0;
@@ -83,7 +88,7 @@ input {
 
 /* 🧱 cards */
 .card {
-  background: white;
+  background: var(--card);
   padding: 14px;
   margin-top: 10px;
   border-radius: 14px;
@@ -98,11 +103,6 @@ input {
 /* oculto */
 .hidden {
   display: none;
-}
-
-.dark {
-  background: #0f172a;
-  color: white;
 }
 
 .dark .card {
