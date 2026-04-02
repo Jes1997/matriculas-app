@@ -1,3 +1,18 @@
+:root {
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --text: #000000;
+  --input: #ffffff;
+  --primary: #3b82f6;
+}
+
+.dark {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #ffffff;
+  --input: #1e293b;
+}
+
 * {
   box-sizing: border-box;
 }
