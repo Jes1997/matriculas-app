@@ -221,20 +221,32 @@ function importData(event) {
 
   reader.onload = function(e) {
     try {
-      const imported = JSON.parse(e.target.result);
+      let text = e.target.result.trim();
 
+      // 🔥 limpiar caracteres raros (WhatsApp, Android, etc)
+      text = text.replace(/^\uFEFF/, "");
+
+      let imported = JSON.parse(text);
+
+      // 🔥 asegurar que es array
       if (!Array.isArray(imported)) {
-        alert("Archivo inválido");
-        return;
+        imported = [imported];
       }
 
-      data = imported;
+      // 🔥 normalizar datos
+      data = imported.map(item => ({
+        plate: (item.plate || "").toString().trim(),
+        company: (item.company || "").toString().trim(),
+        key: (item.key || "").toString().trim()
+      }));
+
       saveStorage();
       render();
 
-      alert("Datos importados correctamente");
-    } catch {
-      alert("Error al importar archivo");
+      alert("Importado correctamente: " + data.length + " registros");
+
+    } catch (err) {
+      alert("Error al importar: " + err.message);
     }
   };
 
