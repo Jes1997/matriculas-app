@@ -1,50 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Matrículas App</title>
-  <link rel="stylesheet" href="style.css">
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#3b82f6">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Matrículas App</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/png" href="./favicon.ico" />
+  </head>
 
-<body>
+  <body>
+    <div class="container">
+      <div class="header">
+        <button class="btn-edit" onclick="toggleForm()">➕ Añadir</button>
+        <button class="btn-export" onclick="exportData()">⬆️ Exportar</button>
+        <button class="btn-import" onclick="importData()">⬇️ Importar</button>
+        <input id="search" placeholder="Buscar matrícula..." />
+      </div>
 
-<div class="container">
+      <!-- 🚀 MODO RÁPIDO (siempre visible para uso en garita) -->
+      <div class="quick-entry">
+        <input
+          id="quickPlate"
+          placeholder="Matrícula rápida (ENTER para guardar)"
+        />
+      </div>
 
-  <div class="header">
+      <div id="form" class="hidden">
+        <h3>Formulario</h3>
 
-    <button onclick="toggleForm()">➕ Añadir / Editar</button>
-    <button onclick="exportData()">⬇️ Exportar</button>
+        <input id="plate" placeholder="Matrícula" />
+        <input id="company" placeholder="Empresa" />
+        <input id="key" placeholder="Llave (opcional)" />
 
-    <input id="search" placeholder="Buscar matrícula...">
+        <button class="btn-save" onclick="save()">Guardar</button>
+        <button class="btn-delete" onclick="cancelEdit()">Cancelar</button>
 
-  </div>
+        <input type="file" id="importFile" onchange="importData(event)" />
+      </div>
 
-  <!-- 🚀 MODO RÁPIDO (siempre visible para uso en garita) -->
-  <div class="quick-entry">
-    <input id="quickPlate" placeholder="Matrícula rápida (ENTER para guardar)">
-  </div>
+      <div id="list"></div>
+    </div>
 
-  <div id="form" class="hidden">
-
-    <h3>Formulario</h3>
-
-    <input id="plate" placeholder="Matrícula">
-    <input id="company" placeholder="Empresa">
-    <input id="key" placeholder="Llave (opcional)">
-
-    <button class="save" onclick="save()">Guardar</button>
-    <button onclick="cancelEdit()">Cancelar</button>
-
-    <input type="file" id="importFile" onchange="importData(event)">
-  </div>
-
-  <div id="list"></div>
-
-</div>
-
-<script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>

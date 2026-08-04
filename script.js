@@ -67,9 +67,7 @@ function save(plateValue = null) {
     return;
   }
 
-  const exists = data.some((x, i) =>
-    x.plate === plate && i !== editIndex
-  );
+  const exists = data.some((x, i) => x.plate === plate && i !== editIndex);
 
   if (exists) {
     alert("Esa matrícula ya existe");
@@ -97,6 +95,32 @@ function save(plateValue = null) {
   if (formVisible) toggleForm();
 }
 
+function quickSave() {
+  const plate = quickPlate.value.toUpperCase().trim();
+
+  if (!plate) return;
+
+  if (data.some((x) => normalize(x.plate) === normalize(plate))) {
+    showToast("La matrícula ya existe");
+    quickPlate.value = "";
+    return;
+  }
+
+  data.push({
+    plate,
+    company: "",
+    key: "",
+  });
+
+  saveStorage();
+  render();
+
+  feedback();
+  showToast("Matrícula añadida");
+
+  quickPlate.value = "";
+}
+
 /* 🔍 render */
 function render() {
   const value = search.value;
@@ -122,8 +146,8 @@ function render() {
     return;
   }
 
-  let results = data.filter(x =>
-    normalize(x.plate).includes(normalize(value))
+  let results = data.filter((x) =>
+    normalize(x.plate).includes(normalize(value)),
   );
 
   /* 🧠 exact match primero */
@@ -138,8 +162,8 @@ function render() {
     return;
   }
 
-  results.forEach(x => {
-    const realIndex = data.findIndex(d => d.plate === x.plate);
+  results.forEach((x) => {
+    const realIndex = data.findIndex((d) => d.plate === x.plate);
 
     list.innerHTML += `
       <div class="card">
@@ -147,8 +171,8 @@ function render() {
         ${x.company}<br>
         ${x.key ? "🔑 " + x.key : ""}
         <br><br>
-        <button class="edit" onclick="edit(${realIndex})">Editar</button>
-        <button class="delete" onclick="del(${realIndex})">Eliminar</button>
+        <button class="btn-edit" onclick="edit(${realIndex})">Editar</button>
+        <button class="btn-delete" onclick="del(${realIndex})">Eliminar</button>
       </div>
     `;
   });
@@ -185,8 +209,7 @@ function clear() {
 /* ⚡ entrada rápida */
 quickPlate.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    save(e.target.value);
-    e.target.value = "";
+    quickSave();
   }
 });
 
@@ -196,7 +219,7 @@ search.addEventListener("input", render);
 /* 📤 export */
 function exportData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json"
+    type: "application/json",
   });
 
   const url = URL.createObjectURL(blob);
@@ -219,7 +242,7 @@ function importData(event) {
 
   const reader = new FileReader();
 
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     try {
       let text = e.target.result.trim();
 
@@ -234,17 +257,16 @@ function importData(event) {
       }
 
       // 🔥 normalizar datos
-      data = imported.map(item => ({
+      data = imported.map((item) => ({
         plate: (item.plate || "").toString().trim(),
         company: (item.company || "").toString().trim(),
-        key: (item.key || "").toString().trim()
+        key: (item.key || "").toString().trim(),
       }));
 
       saveStorage();
       render();
 
       alert("Importado correctamente: " + data.length + " registros");
-
     } catch (err) {
       alert("Error al importar: " + err.message);
     }

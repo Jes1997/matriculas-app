@@ -11,7 +11,7 @@
 
 ## 📱 Demo
 
-👉 https://Jes1997.github.io/matriculas-app/
+👉 https://jes1997.github.io/matriculas-app/
 
 ---
 
